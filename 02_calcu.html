@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* 페이지 전체 배경: 황량한 대지 느낌 */
+        body {
+            background-color: #d2b48c; 
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+            font-family: 'Courier New', Courier, monospace; /* 타자기 느낌의 폰트 */
+        }
+
+        /* 계산기 본체: 낡은 나무 상자 느낌 */
+        .calculator {
+            background-color: #5d4037;
+            padding: 20px;
+            border: 8px solid #3e2723;
+            border-radius: 10px;
+            box-shadow: 10px 10px 5px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        /* 결과창: 오래된 종이 질감 */
+        #result {
+            width: 90%;
+            height: 40px;
+            background-color: #f5f5dc;
+            border: 4px inset #8d6e63;
+            font-size: 20px;
+            text-align: right;
+            margin-bottom: 20px;
+            padding: 5px;
+            color: #333;
+        }
+
+        /* 버튼: 녹슨 철판 느낌 */
+        button {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            font-weight: bold;
+            background-color: #a1887f;
+            border: 3px outset #795548;
+            color: #212121;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #8d6e63;
+        }
+
+        button:active {
+            border-style: inset;
+        }
+
+        h2 {
+            color: #f5f5dc;
+            text-shadow: 2px 2px #000;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <h2>SALOON CALC</h2>
+
+        <input type="text" id="result" value="0" readonly>
+
+        <br>
+        <button>1</button> <button>2</button> <button>3</button> <button>+</button>
+        <br>
+        <button>4</button> <button>5</button> <button>6</button> <button>-</button>
+        <br>
+        <button>7</button> <button>8</button> <button>9</button> <button>*</button>
+        <br>
+        <button>C</button> <button>0</button> <button>=</button> <button>/</button>
+    </div>
+
+</body>
+</html>

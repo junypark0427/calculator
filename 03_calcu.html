@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>SALOON CALC</title>
+    <style>
+        /* 페이지 전체 배경: 황량한 대지 느낌 */
+        body {
+            background-color: #d2b48c; 
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+            font-family: 'Courier New', Courier, monospace; /* 타자기 느낌의 폰트 */
+        }
+
+        /* 계산기 본체: 낡은 나무 상자 느낌 */
+        .calculator {
+            background-color: #5d4037;
+            padding: 20px;
+            border: 8px solid #3e2723;
+            border-radius: 10px;
+            box-shadow: 10px 10px 5px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        /* 결과창: 오래된 종이 질감 */
+        #result {
+            width: 90%;
+            height: 40px;
+            background-color: #f5f5dc;
+            border: 4px inset #8d6e63;
+            font-size: 20px;
+            text-align: right;
+            margin-bottom: 20px;
+            padding: 5px;
+            color: #333;
+            box-sizing: border-box; /* 패딩으로 인한 창 늘어남 방지 */
+        }
+
+        /* 버튼: 녹슨 철판 느낌 */
+        button {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            font-weight: bold;
+            background-color: #a1887f;
+            border: 3px outset #795548;
+            color: #212121;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #8d6e63;
+        }
+
+        button:active {
+            border-style: inset;
+        }
+
+        h2 {
+            color: #f5f5dc;
+            text-shadow: 2px 2px #000;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <h2>SALOON CALC</h2>
+
+        <input type="text" id="result" value="0" readonly>
+
+        <br>
+        <button>1</button> <button>2</button> <button>3</button> <button>+</button>
+        <br>
+        <button>4</button> <button>5</button> <button>6</button> <button>-</button>
+        <br>
+        <button>7</button> <button>8</button> <button>9</button> <button>*</button>
+        <br>
+        <button>C</button> <button>0</button> <button>=</button> <button>/</button>
+    </div>
+
+    <script>
+        const resultInput = document.getElementById('result');
+        const buttons = document.querySelectorAll('button');
+
+        // 계산식을 저장할 변수
+        let currentExpression = '';
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const buttonText = button.textContent;
+
+                if (buttonText === 'C') {
+                    // C를 누르면 초기화
+                    currentExpression = '';
+                    resultInput.value = '0';
+                } 
+                else if (buttonText === '=') {
+                    // =을 누르면 수식 계산
+                    if (currentExpression === '') return;
+
+                    try {
+                        // [안전장치 1] 숫자와 사칙연산 기호(+, -, *, /, .)가 아닌 문자는 정규식으로 강제 제거
+                        const sanitized = currentExpression.replace(/[^0-9+\-*/.]/g, '');
+                        
+                        if (sanitized === '') return;
+
+                        /* [안전장치 2] eval() 대신 고립된 환경에서 실행되는 Function 생성자 사용
+                           전역 스코프를 오염시키지 않고 브라우저 콘솔 권한을 탈취당하지 않는 안전한 방식입니다.
+                        */
+                        const calcResult = new Function(`return ${sanitized}`)();
+                        
+                        // 계산 결과가 Infinity(0으로 나눌 때)거나 NaN(정의되지 않은 값)일 때 처리
+                        if (!isFinite(calcResult) || isNaN(calcResult)) {
+                            resultInput.value = 'Error';
+                            currentExpression = '';
+                        } else {
+                            resultInput.value = calcResult;
+                            currentExpression = String(calcResult); // 이어서 계산 가능하도록 결과값 저장
+                        }
+                    } catch (error) {
+                        resultInput.value = 'Error';
+                        currentExpression = '';
+                    }
+                } 
+                else {
+                    // 일반 숫자나 연산자를 누른 경우
+                    // 처음에 '0'만 있는 상태에서 숫자를 누르면 0을 지워줌
+                    if (resultInput.value === '0' && !isNaN(buttonText)) {
+                        currentExpression = buttonText;
+                    } else {
+                        // 사용 편의성을 위해 연산자가 연속으로 입력되면 마지막 연산자로 교체
+                        const lastChar = currentExpression.slice(-1);
+                        const isLastCharOp = ['+', '-', '*', '/'].includes(lastChar);
+                        const isCurrentCharOp = ['+', '-', '*', '/'].includes(buttonText);
+
+                        if (isLastCharOp && isCurrentCharOp) {
+                            currentExpression = currentExpression.slice(0, -1) + buttonText;
+                        } else {
+                            currentExpression += buttonText;
+                        }
+                    }
+                    resultInput.value = currentExpression;
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
